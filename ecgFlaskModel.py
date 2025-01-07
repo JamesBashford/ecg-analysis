@@ -7,7 +7,7 @@ import os
 
 app = Flask("ECG Analysis")
 
-# Google Drive file ID for your ECG model
+# Google Drive file ID for the ECG model
 FILE_ID = '1CZlPW-Lpoao4Hm-MD7HHSnCJxNLdL-ay'
 
 # Correct URL for the Google Drive file
@@ -66,7 +66,6 @@ def index():
     return "Welcome to the ECG Analysis API. Use the /predict endpoint to analyze images."
 
 if __name__ == '__main__':
-    # Use the dynamically assigned port from the environment, default to 5000
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=5000)
+
 
