@@ -1,1 +1,1 @@
-web: gunicorn ecgFlaskModel:app
+web: python ecgFlaskModel.py
