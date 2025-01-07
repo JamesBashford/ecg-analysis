@@ -4,4 +4,6 @@ gdown==5.2.0
 numpy==1.23.5
 Pillow==11.1.0
 tensorflow==2.17.0
+absl-py==1.4.0
+
 
