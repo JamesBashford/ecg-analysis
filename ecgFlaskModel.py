@@ -26,18 +26,18 @@ model = load_model(model_path)
 # Class labels
 classes = ['Normal', 'Heart Attack']
 
-# Function to preprocess an image
+# Updated function to handle ANY image by forcing it to RGB
 def preprocess_image(image):
-    # 1) Force the image to RGB
+    # 1. Open the file and convert to RGB, ensuring 3 channels (color)
     img = Image.open(image).convert('RGB')
     
-    # 2) Resize to match your model's expected input size
+    # 2. Resize to match your model’s expected input size
     img = img.resize((128, 128))
     
-    # 3) Convert to NumPy and normalize if the model requires it
+    # 3. Convert to NumPy and normalize if needed
     img_array = np.array(img).astype(np.float32) / 255.0
     
-    # 4) Expand to (1, 128, 128, 3) for batch dimension
+    # 4. Add batch dimension → shape: (1, 128, 128, 3)
     img_array = np.expand_dims(img_array, axis=0)
     
     return img_array
@@ -48,14 +48,15 @@ def predict():
         # Get the file from the request
         file = request.files['file']
         
-        # Preprocess the image
+        # Preprocess the image (now guaranteed to be 3 channels)
         img_array = preprocess_image(file)
         
         # Make a prediction
-        prediction = model.predict(img_array)[0][0]  # Get the first (and only) prediction
+        prediction = model.predict(img_array)[0][0]  # get the first (and only) prediction
         
         # Convert prediction to class label
-        predicted_class = classes[int(prediction > 0.5)]  # Threshold: 0.5
+        # Here we assume a binary model output in range 0..1
+        predicted_class = classes[int(prediction > 0.5)]
         confidence = float(prediction if predicted_class == 'Heart Attack' else 1 - prediction)
         
         # Return the result as JSON
@@ -67,7 +68,6 @@ def predict():
         print(f"Error occurred: {e}")
         return jsonify({"error": str(e)}), 500
 
-# Optional: Add a route for the root URL
 @app.route('/')
 def index():
     return "Welcome to the ECG Analysis API. Use the /predict endpoint to analyze images."
