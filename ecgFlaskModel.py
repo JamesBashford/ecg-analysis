@@ -28,11 +28,18 @@ classes = ['Normal', 'Heart Attack']
 
 # Function to preprocess an image
 def preprocess_image(image):
-    img = Image.open(image).convert('L')  # Convert to grayscale
-    img = img.resize((128, 128))  # Resize to match model input
-    img_array = np.array(img).astype(np.float32) / 255.0  # Normalize
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
-    img_array = np.expand_dims(img_array, axis=-1)  # Add channel dimension
+    # 1) Force the image to RGB
+    img = Image.open(image).convert('RGB')
+    
+    # 2) Resize to match your model's expected input size
+    img = img.resize((128, 128))
+    
+    # 3) Convert to NumPy and normalize if the model requires it
+    img_array = np.array(img).astype(np.float32) / 255.0
+    
+    # 4) Expand to (1, 128, 128, 3) for batch dimension
+    img_array = np.expand_dims(img_array, axis=0)
+    
     return img_array
 
 @app.route('/predict', methods=['POST'])
